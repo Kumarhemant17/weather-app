@@ -1,29 +1,56 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Character encoding -->
     <meta charset="UTF-8" />
+
+    <!-- Makes website responsive on all devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Title shown on browser tab -->
     <title>Weather App</title>
+
+    <!-- Google Font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Sansita&display=swap"
       rel="stylesheet"
     />
+
+    <!-- External CSS file -->
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
+    <!-- Main card container -->
     <div class="card">
+      <!-- Search section -->
       <div class="search">
+        <!-- Input box for city name -->
         <input type="text" placeholder="Enter City Name" spellcheck="false" />
+
+        <!-- Search button with icon -->
         <button><img src="images/search.jpg" /></button>
       </div>
+
+      <!-- Error message (hidden by default in CSS) -->
       <div class="error">
         <p>Invalid City Name</p>
       </div>
+
+      <!-- Weather display section -->
       <div class="weather">
+        <!-- Weather icon -->
         <img src="images/clear.png" class="weather-icon" />
+
+        <!-- Temperature -->
         <h1 class="temp">22°C</h1>
+
+        <!-- City name -->
         <h2 class="city">Mumbai</h2>
+
+        <!-- Additional details -->
         <div class="details">
+          <!-- Humidity section -->
           <div class="col">
             <img src="images/humidity.png" />
             <div>
@@ -31,6 +58,8 @@
               <p>Humidity</p>
             </div>
           </div>
+
+          <!-- Wind speed section -->
           <div class="col">
             <img src="images/wind.png" />
             <div>
@@ -41,25 +70,37 @@
         </div>
       </div>
     </div>
+
     <script>
+      // API key (you need to paste your own key here)
       const apiKey = "";
+
+      // Base API URL with metric units
       const apiUrl =
         "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
+      // Selecting elements from DOM
       const searchBox = document.querySelector(".search input");
       const searchBtn = document.querySelector(".search button");
       const weatherIcon = document.querySelector(".weather-icon");
 
+      // Function to fetch weather data
       async function checkWeather(city) {
-        if (!city || city.trim() === "") return; // ✅ added
+        // Prevent empty input
+        if (!city || city.trim() === "") return;
 
+        // Fetch data from API
         const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+
+        // If city not found
         if (response.status == 404) {
           document.querySelector(".error").style.display = "block";
           document.querySelector(".weather").style.display = "none";
         } else {
+          // Convert response to JSON
           var data = await response.json();
 
+          // Update UI with API data
           document.querySelector(".city").innerHTML = data.name;
           document.querySelector(".temp").innerHTML =
             Math.round(data.main.temp) + "°C";
@@ -67,6 +108,7 @@
             data.main.humidity + "%";
           document.querySelector(".wind").innerHTML = data.wind.speed + " kmph";
 
+          // Change weather icon based on condition
           if (data.weather[0].main == "Clouds") {
             weatherIcon.src = "images/clouds.png";
           } else if (data.weather[0].main == "Clear") {
@@ -79,11 +121,13 @@
             weatherIcon.src = "images/humidity.png";
           }
 
+          // Show weather data and hide error
           document.querySelector(".weather").style.display = "block";
           document.querySelector(".error").style.display = "none";
         }
       }
 
+      // Event listener for search button click
       searchBtn.addEventListener("click", () => {
         checkWeather(searchBox.value.trim());
       });
